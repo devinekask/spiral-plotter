@@ -78,6 +78,10 @@ const render = () => {
   geometry.rotateY(params.rotateY);
   geometry.rotateZ(params.rotateZ);
 
+  geometry.translate(params.transX, params.transY, 0);
+
+  geometry.scale(params.scaleX, params.scaleY, 1);
+
   const line = new THREE.Line(geometry, material);
 
   scene.add(line);
@@ -102,6 +106,10 @@ const initGui = () => {
   gui.add(params, "start", 0, 100);
   gui.add(params, "smoothness", 0.1, 1);
   gui.add(params, "cone", -10, 10);
+  gui.add(params, "transX", -1, 1);
+  gui.add(params, "transY", -1, 1);
+  gui.add(params, "scaleX", 0.1, 2);
+  gui.add(params, "scaleY", 0.1, 2);
   gui.add(params, "plot");
 
   gui.onChange(() => {
@@ -166,6 +174,10 @@ const params = {
   start: 1,
   smoothness: 0.3,
   cone: 0,
+  transX: 0,
+  transY: 0,
+  scaleX: 1,
+  scaleY: 1,
   plot: plotIt,
 };
 
