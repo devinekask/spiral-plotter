@@ -13,13 +13,32 @@ const httpServer = http.createServer(app);
 const io = new Server(httpServer);
 
 const port = process.env.PORT || 3005;
+let arduinoPort;
+let parser;
 
-const arduinoPort = new SerialPort({
-  path: "/dev/cu.usbmodem141101",
-  baudRate: 9600,
+SerialPort.list().then((ports) => {
+  let done = false;
+  let count = 0;
+  let allports = ports.length;
+  ports.forEach(function (port) {
+    count = count + 1;
+    const pm = port.manufacturer;
+
+    if (typeof pm !== "undefined" && pm.includes("arduino")) {
+      const path = port.path;
+      arduinoPort = new SerialPort({ path, baudRate: 9600 });
+      arduinoPort.on("open", function () {
+        console.log(`Arduino is now connected at port ${path}`);
+        parser = arduinoPort.pipe(new ReadlineParser({ delimiter: "\r\n" }));
+      });
+      done = true;
+    }
+
+    if (count === allports && done === false) {
+      console.log(`can't find any arduino`);
+    }
+  });
 });
-
-const parser = arduinoPort.pipe(new ReadlineParser({ delimiter: "\r\n" }));
 
 app.use(express.static("dist"));
 
@@ -43,18 +62,20 @@ io.on("connection", (socket) => {
     console.log("Socket disconnected", socket.id);
   });
 
-  parser.on("data", (json) => {
-    try {
-      const values = JSON.parse(json);
-    } catch (e) {
-      // console.log("error", e);
-    }
-    socket.emit("parameters", json);
-  });
+  if (parser) {
+    parser.on("data", (json) => {
+      try {
+        const values = JSON.parse(json);
+      } catch (e) {
+        // console.log("error", e);
+      }
+      socket.emit("parameters", json);
+    });
+  }
 });
 
 httpServer.listen(port, () => {
-  console.log(`App listening on port ${port}!`);
+  console.log(`App listening on port ${port} - http://localhost:${port}`);
 });
 
 const writeSvg = (filename, data) => fs.writeFile(filename, data);
