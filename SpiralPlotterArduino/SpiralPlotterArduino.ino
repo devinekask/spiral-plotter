@@ -1,34 +1,57 @@
+
 #include <RunningAverage.h>
 #include <ArduinoJson.h>
 #include <ArduinoJson.hpp>
 
-int sensorPin = A0;
-int prevLineLength = 0;
+class Input {
+  RunningAverage average;
+public:
+  Input(String name, int pin)
+    : name(name), pin(pin), average(5) {}
+  String name;
+  int pin;
+  int previous = 0;
 
-RunningAverage raLineLength(5);
+  void read() {
+    int sensorValue = analogRead(pin);
+    average.addValue(sensorValue);
+  }
 
-void setup()
-{
-  raLineLength.clear();
-	Serial.begin(9600);
-	while (!Serial)
-		continue;
+  int getAverage() {
+    return floor(average.getAverage());
+  }
+};
+
+
+Input inputs[] = {
+  Input("lineLength", 0),
+  Input("start", 1),
+  Input("cone", 2),
+  Input("rotx", 3),
+  Input("scalex", 4),
+  Input("transx", 5)
+};
+
+void setup() {
+  Serial.begin(9600);
+  while (!Serial)
+    continue;
 }
 
-void loop()
-{
-  int sensorValue = analogRead(sensorPin);
-  raLineLength.addValue(sensorValue);
-
-	DynamicJsonDocument doc(1024);
-
-  int lineLength = floor(raLineLength.getAverage());
-//  int lineLength = sensorValue;
-  if(abs(lineLength-prevLineLength)>2){
-	  doc["lineLength"] = lineLength;
-    prevLineLength = lineLength;
-	  serializeJson(doc, Serial);
-	  Serial.println();
+void loop() {
+  DynamicJsonDocument doc(1024);
+  for (byte i = 0; i < 6; i = i + 1) {
+    inputs[i].read();
+    int value = inputs[i].getAverage();
+    if (abs(value - inputs[i].previous) > 2) {
+      doc[inputs[i].name] = value;
+      inputs[i].previous = value;
+    }
   }
-	delay(50);
+  if (!doc.isNull()) {
+    serializeJson(doc, Serial);
+    Serial.println();
+  }
+
+  delay(50);
 }
