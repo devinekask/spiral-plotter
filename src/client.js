@@ -11,16 +11,16 @@ let socket; // will be assigned a value later
 const scale = 3.77952756;
 
 // https://www.generativehut.com/post/render-3d-scenes-from-webgl-to-svg
-const renderer = new SVGRenderer();
+/*const renderer = new SVGRenderer();
 renderer.overdraw = 0;
 renderer.setSize(148 * scale, 105 * scale);
 document.body.appendChild(renderer.domElement);
 renderer.domElement.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-renderer.domElement.setAttribute("id", "svg");
+renderer.domElement.setAttribute("id", "svg");*/
 
-/* const renderer = new THREE.WebGLRenderer();
+const renderer = new THREE.WebGLRenderer();
 renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement); */
+document.body.appendChild(renderer.domElement);
 
 const camera = new THREE.PerspectiveCamera(
   45,
