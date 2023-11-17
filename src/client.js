@@ -91,10 +91,6 @@ const render = () => {
   renderer.render(scene, camera);
 };
 
-/*
-const url = "data:image/svg+xml;charset=utf-8," + encodeURIComponent(source);
-document.getElementById("a").href = url; */
-
 const initGui = () => {
   gui = new GUI();
 
@@ -121,8 +117,6 @@ const initGui = () => {
       }, 3000);
     }
   });
-
-  console.log(gui.controllers);
 };
 
 const initSocket = () => {
@@ -186,8 +180,10 @@ const params = {
 };
 
 render();
-initGui();
+//initGui();
 initSocket();
+
+window.initGui = initGui;
 
 setTimeout(() => {
   pause = true;

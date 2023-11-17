@@ -5,15 +5,19 @@ html {
 	box-sizing: inherit;
 }
 
+html {height: 100%;}
+
 body {
+margin: 0;
+padding: 0;
 display: grid;
 place-items: center;
-height: 95vh;
+height: 100%;
 }
 
 svg {
 	box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 	aspect-ratio: 4/3;
-	width: 85vw;
-	height: auto;
+	height: 95vh;
+	width: auto;
 }
