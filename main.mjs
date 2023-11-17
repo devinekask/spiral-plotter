@@ -40,10 +40,6 @@ SerialPort.list().then((ports) => {
   });
 });
 
-app.use(express.static("dist"));
-
-console.log("zx here");
-
 if (argv.build) {
   await $`npm run build`;
 }
@@ -90,8 +86,13 @@ io.on("connection", (socket) => {
   }
 });
 
+app.use(express.static("dist"));
+
+console.log("zx here");
+
 httpServer.listen(port, () => {
-  console.log(`App listening on port ${port} - http://localhost:${port}`);
+  console.log(`Server listening on port ${port} - http://localhost:${port}`);
+  $`chromium-browser --kiosk http://localhost:${port}`;
 });
 
 const writeSvg = (filename, data) => fs.writeFile(filename, data);
