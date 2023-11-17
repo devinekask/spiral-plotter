@@ -29,11 +29,11 @@ public:
 
 Input inputs[] = {
   Input("lineLength", 0),
-  Input("start", 1),
+  Input("increment", 1),
   Input("cone", 2),
-  Input("rotx", 3),
-  Input("scalex", 4),
-  Input("transx", 5)
+  Input("rotateX", 3),
+  Input("scaleX", 4),
+  Input("transX", 5)
 };
 
 void setup() {
