@@ -53,9 +53,25 @@ if (argv.disengage) {
 }
 
 io.on("connection", (socket) => {
+  if (arduinoPort) {
+    arduinoPort.write("ready");
+  }
+
   console.log("Socket connected", socket.id);
-  socket.on("plot", (data) => {
-    plotIt(data.svg);
+
+  socket.on("svgstring", async (data) => {
+    console.log("let's plot it");
+    if (arduinoPort) {
+      arduinoPort.write("busy");
+    }
+
+    await sleep(5000);
+    // plotIt(data.svg);
+
+    console.log("done plotting");
+    if (arduinoPort) {
+      arduinoPort.write("ready");
+    }
   });
 
   socket.on("disconnect", (socket) => {

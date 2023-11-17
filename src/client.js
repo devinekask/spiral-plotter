@@ -134,6 +134,10 @@ const initSocket = () => {
   socket.on("parameters", (params) => {
     const values = JSON.parse(params);
     Object.keys(values).forEach((key) => {
+      if (key === "plot") {
+        sendSVG();
+        return;
+      }
       const controller = gui.controllers.find((c) => c.property === key);
       const mapped = mapRange(
         values[key],
@@ -152,14 +156,14 @@ const mapRange = (value, a, b, c, d) => {
   return c + value * (d - c);
 };
 
-const plotIt = () => {
+const sendSVG = () => {
   if (socket.connected) {
     const svg = document.getElementById("svg");
     const serializer = new XMLSerializer();
     const source = serializer.serializeToString(svg);
     // source = '<?xml version="1.0" standalone="no"?>\r\n' + source;
 
-    socket.emit("plot", {
+    socket.emit("svgstring", {
       svg: source,
     });
   }
@@ -178,7 +182,7 @@ const params = {
   transY: 0,
   scaleX: 1,
   scaleY: 1,
-  plot: plotIt,
+  plot: sendSVG,
 };
 
 render();

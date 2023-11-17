@@ -3,6 +3,10 @@
 #include <ArduinoJson.h>
 #include <ArduinoJson.hpp>
 
+int BTNLED = 10;
+int BTN = 13;
+bool plotterReady = false;
+
 class Input {
   RunningAverage average;
 public:
@@ -34,8 +38,14 @@ Input inputs[] = {
 
 void setup() {
   Serial.begin(9600);
+
+  pinMode(BTNLED, OUTPUT);
+  pinMode(BTN, INPUT);
+
   while (!Serial)
     continue;
+
+  digitalWrite(BTNLED, HIGH);
 }
 
 void loop() {
@@ -48,6 +58,30 @@ void loop() {
       inputs[i].previous = value;
     }
   }
+  
+  if (Serial.available() > 0) {
+    String serialMessage = Serial.readStringUntil('\n');
+    if (serialMessage == "ready") {
+      plotterReady = true;
+    }
+    if (serialMessage == "busy") {
+      plotterReady = false;
+    }
+  }
+
+  int buttonState = digitalRead(BTN);
+  if (buttonState == HIGH) {
+    plotterReady = false;
+    doc["plot"] = true;
+  }
+
+  if (plotterReady) {
+    digitalWrite(BTNLED, HIGH);
+  } else {
+    digitalWrite(BTNLED, LOW);
+  }
+
+
   if (!doc.isNull()) {
     serializeJson(doc, Serial);
     Serial.println();
