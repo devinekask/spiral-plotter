@@ -6,8 +6,8 @@ zx main.mjs &
 
 # Disable screen blanking
 DISPLAY=:0 xset s noblank
-xset s off
-xset -dpms
+DISPLAY=:0 xset s off
+DISPLAY=:0 xset -dpms
 
 # hide the mouse cursor
 unclutter -idle 0.5 -root &
