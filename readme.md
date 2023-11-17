@@ -9,3 +9,9 @@
 ## Bill of materials
 
 - [Screen](https://www.waveshare.com/10.1inch-hdmi-lcd-b-with-case.htm)
+
+## PI
+
+kiosk mode <https://pimylifeup.com/raspberry-pi-kiosk/>
+
+kiosk.service pahth: /lib/systemd/system/kiosk.service
