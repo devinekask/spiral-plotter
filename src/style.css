@@ -15,9 +15,13 @@ place-items: center;
 height: 100%;
 }
 
-svg {
+canvas {
 	box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 	aspect-ratio: 4/3;
 	height: 95vh;
 	width: auto;
+}
+
+svg {
+	display: none;
 }

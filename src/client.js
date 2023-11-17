@@ -10,17 +10,12 @@ let pause = true;
 let socket; // will be assigned a value later
 const scale = 3.77952756;
 
-// https://www.generativehut.com/post/render-3d-scenes-from-webgl-to-svg
-/*const renderer = new SVGRenderer();
-renderer.overdraw = 0;
-renderer.setSize(148 * scale, 105 * scale);
-document.body.appendChild(renderer.domElement);
-renderer.domElement.setAttribute("xmlns", "http://www.w3.org/2000/svg");
-renderer.domElement.setAttribute("id", "svg");*/
-
-const renderer = new THREE.WebGLRenderer();
-renderer.setSize(window.innerWidth, window.innerHeight);
-document.body.appendChild(renderer.domElement);
+const webGLrenderer = new THREE.WebGLRenderer();
+webGLrenderer.setSize(
+  ((window.innerHeight * 0.95) / 2) * 3,
+  window.innerHeight * 0.95
+);
+document.body.appendChild(webGLrenderer.domElement);
 
 const camera = new THREE.PerspectiveCamera(
   45,
@@ -40,7 +35,14 @@ const noise = new ImprovedNoise();
 
 let gui;
 
-const render = () => {
+const visualRenderer = () => {
+  spiralRender(webGLrenderer);
+  if (!pause) {
+    requestAnimationFrame(visualRenderer);
+  }
+};
+
+const spiralRender = (renderEngine) => {
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0xffffff);
 
@@ -85,10 +87,8 @@ const render = () => {
   const line = new THREE.Line(geometry, material);
 
   scene.add(line);
-  if (!pause) {
-    requestAnimationFrame(render);
-  }
-  renderer.render(scene, camera);
+
+  renderEngine.render(scene, camera);
 };
 
 const initGui = () => {
@@ -112,7 +112,7 @@ const initGui = () => {
   gui.onChange(() => {
     if (pause) {
       pause = false;
-      render();
+      visualRenderer();
       setTimeout(() => {
         pause = true;
       }, 3000);
@@ -162,6 +162,16 @@ const mapRange = (value, a, b, c, d) => {
 
 const sendSVG = () => {
   if (socket.connected) {
+    // https://www.generativehut.com/post/render-3d-scenes-from-webgl-to-svg
+    const svgRenderer = new SVGRenderer();
+    svgRenderer.overdraw = 0;
+    svgRenderer.setSize(148 * scale, 105 * scale);
+    document.body.appendChild(svgRenderer.domElement);
+    svgRenderer.domElement.setAttribute("xmlns", "http://www.w3.org/2000/svg");
+    svgRenderer.domElement.setAttribute("id", "svg");
+
+    spiralRender(svgRenderer);
+
     const svg = document.getElementById("svg");
     const serializer = new XMLSerializer();
     const source = serializer.serializeToString(svg);
@@ -189,7 +199,7 @@ const params = {
   plot: sendSVG,
 };
 
-render();
+visualRenderer();
 initGui();
 initSocket();
 
