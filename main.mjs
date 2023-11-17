@@ -92,7 +92,6 @@ console.log("zx here");
 
 httpServer.listen(port, () => {
   console.log(`Server listening on port ${port} - http://localhost:${port}`);
-  $`chromium-browser --kiosk http://localhost:${port}`;
 });
 
 const writeSvg = (filename, data) => fs.writeFile(filename, data);
