@@ -5,13 +5,13 @@ cd /home/pi/spiral-plotter
 zx main.mjs &
 
 # Disable screen blanking
-DISPLAY=:0 xset s noblank
-DISPLAY=:0 xset s off
-DISPLAY=:0 xset -dpms
+export DISPLAY=:0
+xset s noblank
+xset s off
+xset -dpms
 
 # hide the mouse cursor
 unclutter -idle 0.5 -root &
-
 
 # dont show warnings etc
 sed -i 's/"exited_cleanly":false/"exited_cleanly":true/' /home/$USER/.config/chromium/Default/Preferences
