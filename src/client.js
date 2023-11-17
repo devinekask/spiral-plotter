@@ -93,6 +93,7 @@ const render = () => {
 
 const initGui = () => {
   gui = new GUI();
+  gui.hide();
 
   gui.add(params, "lineLength", 100, 10000);
   gui.add(params, "rotateX", 0, 2 * Math.PI);
@@ -117,6 +118,15 @@ const initGui = () => {
       }, 3000);
     }
   });
+  console.log("Run showGui() to show the GUI");
+};
+
+const showGui = (show = true) => {
+  if (show) {
+    gui.show();
+  } else {
+    gui.hide();
+  }
 };
 
 const initSocket = () => {
@@ -180,10 +190,10 @@ const params = {
 };
 
 render();
-//initGui();
+initGui();
 initSocket();
 
-window.initGui = initGui;
+window.showGui = showGui;
 
 setTimeout(() => {
   pause = true;
