@@ -12,6 +12,8 @@
 
 ## PI
 
-kiosk mode <https://pimylifeup.com/raspberry-pi-kiosk/>
+kiosk mode
+<https://pimylifeup.com/raspberry-pi-kiosk/>
+<https://jonathanmh.com/raspberry-pi-4-kiosk-wall-display-dashboard/>
 
 kiosk.service pahth: /lib/systemd/system/kiosk.service
