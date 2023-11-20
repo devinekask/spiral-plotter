@@ -3,7 +3,7 @@ import "./style.css";
 import * as THREE from "three";
 import { SVGRenderer } from "three/addons/renderers/SVGRenderer.js";
 import { ImprovedNoise } from "three/examples/jsm/math/ImprovedNoise.js";
-//import { GUI } from "three/addons/libs/lil-gui.module.min.js";
+
 import { io } from "socket.io-client";
 
 let pause = true;
@@ -14,14 +14,12 @@ let scene, webGLrenderer, camera;
 
 const noise = new ImprovedNoise();
 
-/* let gui; */
-
 const visualRenderer = () => {
   console.log("visualRenderer");
   spiralRender(webGLrenderer);
-  /* if (!pause) {
+  if (!pause) {
     requestAnimationFrame(visualRenderer);
-  } */
+  }
 };
 
 const initThree = () => {
@@ -102,44 +100,6 @@ const spiralRender = (renderEngine) => {
   material.dispose();
 };
 
-/* const initGui = () => {
-  gui = new GUI();
-  gui.hide();
-
-  gui.add(params, "lineLength", 100, 10000);
-  gui.add(params, "rotateX", 0, 2 * Math.PI);
-  gui.add(params, "rotateY", 0, 2 * Math.PI);
-  gui.add(params, "rotateZ", 0, 2 * Math.PI);
-  gui.add(params, "increment", 0.001, 0.01);
-  gui.add(params, "start", 0, 100);
-  gui.add(params, "smoothness", 0.1, 1);
-  gui.add(params, "cone", -10, 10);
-  gui.add(params, "transX", -1, 1);
-  gui.add(params, "transY", -1, 1);
-  gui.add(params, "scaleX", 0.1, 2);
-  gui.add(params, "scaleY", 0.1, 2);
-  gui.add(params, "plot");
-
-  gui.onChange(() => {
-    if (pause) {
-      pause = false;
-      visualRenderer();
-      setTimeout(() => {
-        pause = true;
-      }, 3000);
-    }
-  });
-  console.log("Run showGui() to show the GUI");
-};
- */
-/* const showGui = (show = true) => {
-  if (show) {
-    gui.show();
-  } else {
-    gui.hide();
-  }
-};
- */
 const initSocket = () => {
   socket = io.connect("/");
   socket.on("connect", () => {
@@ -147,6 +107,7 @@ const initSocket = () => {
   });
 
   socket.on("parameters", (serialParams) => {
+    pause = false;
     const values = JSON.parse(serialParams);
     Object.keys(values).forEach((key) => {
       if (key === "plot") {
@@ -163,7 +124,9 @@ const initSocket = () => {
       );
       controller.value = mapped;
     });
-    visualRenderer();
+    setTimeout(() => {
+      pause = true;
+    }, 3000);
   });
 };
 
@@ -214,5 +177,3 @@ initThree();
 visualRenderer();
 //initGui();
 initSocket();
-
-//window.showGui = showGui;
