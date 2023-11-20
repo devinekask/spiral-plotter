@@ -10,26 +10,7 @@ let pause = true;
 let socket;
 const scale = 3.77952756;
 
-const webGLrenderer = new THREE.WebGLRenderer();
-webGLrenderer.setSize(
-  ((window.innerHeight * 0.95) / 2) * 3,
-  window.innerHeight * 0.95
-);
-document.body.appendChild(webGLrenderer.domElement);
-
-const camera = new THREE.PerspectiveCamera(
-  45,
-  window.innerWidth / window.innerHeight,
-  1,
-  500
-);
-camera.position.set(0, 0, 20);
-camera.lookAt(0, 0, 0);
-
-const material = new THREE.LineBasicMaterial({
-  color: 0x000000,
-  linewidth: 0.5,
-});
+let scene, webGLrenderer, camera;
 
 const noise = new ImprovedNoise();
 
@@ -43,10 +24,28 @@ const visualRenderer = () => {
   } */
 };
 
-const spiralRender = (renderEngine) => {
-  const scene = new THREE.Scene();
+const initThree = () => {
+  camera = new THREE.PerspectiveCamera(
+    45,
+    window.innerWidth / window.innerHeight,
+    1,
+    500
+  );
+  camera.position.set(0, 0, 20);
+  camera.lookAt(0, 0, 0);
+
+  scene = new THREE.Scene();
   scene.background = new THREE.Color(0xffffff);
 
+  webGLrenderer = new THREE.WebGLRenderer();
+  webGLrenderer.setSize(
+    ((window.innerHeight * 0.95) / 2) * 3,
+    window.innerHeight * 0.95
+  );
+  document.body.appendChild(webGLrenderer.domElement);
+};
+
+const spiralRender = (renderEngine) => {
   let radius = params.start.value;
   const points = [];
 
@@ -78,6 +77,11 @@ const spiralRender = (renderEngine) => {
     radius += params.increment.value;
   }
 
+  const material = new THREE.LineBasicMaterial({
+    color: 0x000000,
+    linewidth: 0.5,
+  });
+
   const geometry = new THREE.BufferGeometry().setFromPoints(points);
 
   geometry.rotateX(params.rotateX.value);
@@ -91,8 +95,11 @@ const spiralRender = (renderEngine) => {
   const line = new THREE.Line(geometry, material);
 
   scene.add(line);
-
   renderEngine.render(scene, camera);
+  scene.remove(line);
+
+  geometry.dispose();
+  material.dispose();
 };
 
 /* const initGui = () => {
@@ -203,6 +210,7 @@ const params = {
   scaleY: { min: 0.1, max: 2, value: 1 },
 };
 
+initThree();
 visualRenderer();
 //initGui();
 initSocket();
