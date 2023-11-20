@@ -7,6 +7,7 @@ import { ImprovedNoise } from "three/examples/jsm/math/ImprovedNoise.js";
 import { io } from "socket.io-client";
 
 let pause = true;
+let pauseTimeout;
 let socket;
 const scale = 3.77952756;
 
@@ -107,7 +108,9 @@ const initSocket = () => {
   });
 
   socket.on("parameters", (serialParams) => {
-    pause = false;
+    if (pauseTimeout) {
+      clearTimeout(pauseTimeout);
+    }
     const values = JSON.parse(serialParams);
     Object.keys(values).forEach((key) => {
       if (key === "plot") {
@@ -124,7 +127,11 @@ const initSocket = () => {
       );
       controller.value = mapped;
     });
-    setTimeout(() => {
+    if (pause) {
+      pause = false;
+      visualRenderer();
+    }
+    pauseTimeout = setTimeout(() => {
       pause = true;
     }, 3000);
   });
