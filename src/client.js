@@ -6,19 +6,36 @@ import { ImprovedNoise } from "three/examples/jsm/math/ImprovedNoise.js";
 
 import { io } from "socket.io-client";
 
-let pause = true;
-let pauseTimeout;
+const MODE = {
+  DRAW: "draw",
+  PAUSE: "pause",
+  SCREENSAVER: "screensaver",
+};
+
+const PAUSE_TIMEOUT = 3000;
+const SCREENSAVER_TIMEOUT = 10000;
+
+let currentMode = MODE.DRAW;
+let pauseTimeout, screenSaverTimeout;
 let socket;
 const scale = 3.77952756;
+let screenTick = 0;
 
 let scene, webGLrenderer, camera;
 
 const noise = new ImprovedNoise();
 
 const visualRenderer = () => {
-  console.log("visualRenderer");
-  spiralRender(webGLrenderer);
-  if (!pause) {
+  switch (currentMode) {
+    case MODE.DRAW:
+      spiralRender(webGLrenderer);
+      break;
+    case MODE.SCREENSAVER:
+      screenSaver();
+      spiralRender(webGLrenderer);
+      break;
+  }
+  if (currentMode != MODE.PAUSE) {
     requestAnimationFrame(visualRenderer);
   }
 };
@@ -108,9 +125,8 @@ const initSocket = () => {
   });
 
   socket.on("parameters", (serialParams) => {
-    if (pauseTimeout) {
-      clearTimeout(pauseTimeout);
-    }
+    clearTimeouts();
+
     const values = JSON.parse(serialParams);
     Object.keys(values).forEach((key) => {
       if (key === "plot") {
@@ -127,14 +143,35 @@ const initSocket = () => {
       );
       controller.value = mapped;
     });
-    if (pause) {
-      pause = false;
-      visualRenderer();
+
+    if (currentMode === MODE.PAUSE) {
+      currentMode === MODE.DRAW;
+      visualRenderer(); // kick in the render loop
     }
-    pauseTimeout = setTimeout(() => {
-      pause = true;
-    }, 3000);
+    setTimeouts();
   });
+};
+
+const setTimeouts = () => {
+  pauseTimeout = setTimeout(() => {
+    console.log(" currentMode = MODE.PAUSE;");
+    currentMode = MODE.PAUSE;
+  }, PAUSE_TIMEOUT);
+
+  screenSaverTimeout = setTimeout(() => {
+    console.log(" currentMode = MODE.SCREENSAVER;");
+    currentMode = MODE.SCREENSAVER;
+    visualRenderer();
+  }, SCREENSAVER_TIMEOUT);
+};
+
+const clearTimeouts = () => {
+  if (pauseTimeout) {
+    clearTimeout(pauseTimeout);
+  }
+  if (screenSaverTimeout) {
+    clearTimeout(screenSaverTimeout);
+  }
 };
 
 const mapRange = (value, a, b, c, d) => {
@@ -170,9 +207,9 @@ const params = {
   rotateX: { min: 0, max: 2 * Math.PI, value: 0 },
   rotateY: { min: 0, max: 2 * Math.PI, value: 0 },
   rotateZ: { min: 0, max: 2 * Math.PI, value: 0 },
-  increment: { min: 0.001, max: 0.01, value: 0.001 },
+  increment: { min: 0.001, max: 0.002, value: 0.001 },
   start: { min: 0, max: 100, value: 1 },
-  smoothness: { min: 0.1, max: 1, value: 0.3 },
+  smoothness: { min: 0.1, max: 0.7, value: 0.3 },
   cone: { min: -10, max: 10, value: 0 },
   transX: { min: -1, max: 1, value: 0 },
   transY: { min: -1, max: 1, value: 0 },
@@ -180,7 +217,28 @@ const params = {
   scaleY: { min: 0.1, max: 2, value: 1 },
 };
 
+const screenSaver = () => {
+  animateParam(params.rotateY, 0);
+  animateParam(params.rotateZ, 10);
+  animateParam(params.cone, 20);
+  animateParam(params.smoothness, 22);
+  animateParam(params.increment, 25);
+
+  screenTick += 0.001;
+};
+
+const animateParam = (param, phase) => {
+  param.value = mapRange(
+    noise.noise(screenTick + phase, 0, 0),
+    -1,
+    1,
+    param.min * 1.2,
+    param.max * 0.8
+  );
+};
+
 initThree();
 visualRenderer();
+setTimeouts();
 //initGui();
 initSocket();
