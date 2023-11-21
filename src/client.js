@@ -92,7 +92,6 @@ const spiralRender = (renderEngine) => {
 
   const material = new THREE.LineBasicMaterial({
     color: 0x000000,
-    linewidth: 0.5,
   });
 
   const geometry = new THREE.BufferGeometry().setFromPoints(points);

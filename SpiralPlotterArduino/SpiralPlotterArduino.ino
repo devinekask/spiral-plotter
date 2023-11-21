@@ -7,6 +7,12 @@ int BTNLED = 10;
 int BTN = 13;
 bool plotterReady = false;
 
+unsigned long lastDebounceTime = 0;
+unsigned long debounceDelay = 50;
+
+int buttonState;          
+int lastButtonState = LOW;
+
 class Input {
   RunningAverage average;
 public:
@@ -58,7 +64,7 @@ void loop() {
       inputs[i].previous = value;
     }
   }
-  
+
   if (Serial.available() > 0) {
     String serialMessage = Serial.readStringUntil('\n');
     if (serialMessage == "ready") {
@@ -69,11 +75,20 @@ void loop() {
     }
   }
 
-  int buttonState = digitalRead(BTN);
-  if (buttonState == HIGH) {
-    plotterReady = false;
-    doc["plot"] = true;
+  int buttonReading = digitalRead(BTN);
+  if (buttonReading != lastButtonState) {
+    lastDebounceTime = millis();
   }
+  if ((millis() - lastDebounceTime) > debounceDelay) {
+    if (buttonReading != buttonState) {
+      buttonState = buttonReading;
+      if (buttonState == HIGH) {
+        plotterReady = false;
+        doc["plot"] = true;
+      }
+    }
+  }
+  lastButtonState = buttonReading;
 
   if (plotterReady) {
     digitalWrite(BTNLED, HIGH);
