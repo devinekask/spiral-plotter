@@ -144,7 +144,7 @@ const initSocket = () => {
       controller.value = mapped;
     });
 
-    if (currentMode === MODE.PAUSE) {
+    if (currentMode != MODE.DRAW) {
       currentMode === MODE.DRAW;
       visualRenderer(); // kick in the render loop
     }
