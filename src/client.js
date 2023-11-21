@@ -26,15 +26,12 @@ let scene, webGLrenderer, camera;
 const noise = new ImprovedNoise();
 
 const visualRenderer = () => {
-  switch (currentMode) {
-    case MODE.DRAW:
-      spiralRender(webGLrenderer);
-      break;
-    case MODE.SCREENSAVER:
-      screenSaver();
-      spiralRender(webGLrenderer);
-      break;
+  if (currentMode === MODE.SCREENSAVER) {
+    screenSaver();
   }
+
+  spiralRender(webGLrenderer);
+
   if (currentMode != MODE.PAUSE) {
     requestAnimationFrame(visualRenderer);
   }
@@ -145,7 +142,7 @@ const initSocket = () => {
     });
 
     if (currentMode != MODE.DRAW) {
-      currentMode === MODE.DRAW;
+      currentMode = MODE.DRAW;
       visualRenderer(); // kick in the render loop
     }
     setTimeouts();
@@ -240,5 +237,4 @@ const animateParam = (param, phase) => {
 initThree();
 visualRenderer();
 setTimeouts();
-//initGui();
 initSocket();
