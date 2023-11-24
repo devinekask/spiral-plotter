@@ -1,6 +1,9 @@
 #!/bin/bash
 export PATH="/home/pi/.config/nvm/versions/node/v18.18.0/bin:/home/pi/.local/bin/:${PATH}"
 
+which vpype
+which axicli
+
 cd /home/pi/spiral-plotter
 zx main.mjs &
 
