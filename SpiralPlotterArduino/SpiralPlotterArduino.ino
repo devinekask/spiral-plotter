@@ -5,12 +5,13 @@
 
 int BTNLED = 10;
 int BTN = 13;
-bool plotterReady = false;
+String plotterStatus = "busy";
+bool blinkFlag = true;
 
 unsigned long lastDebounceTime = 0;
 unsigned long debounceDelay = 50;
 
-int buttonState;          
+int buttonState;
 int lastButtonState = LOW;
 
 class Input {
@@ -75,16 +76,11 @@ void loop() {
 
   if (Serial.available() > 0) {
     String serialMessage = Serial.readStringUntil('\n');
-    if (serialMessage == "ready") {
-      plotterReady = true;
-    }
-    if (serialMessage == "busy") {
-      plotterReady = false;
-    }
+    plotterStatus = serialMessage;
   }
 
   int buttonReading = digitalRead(BTN);
-  
+
   if (buttonReading != lastButtonState) {
     lastDebounceTime = millis();
   }
@@ -92,17 +88,25 @@ void loop() {
     if (buttonReading != buttonState) {
       buttonState = buttonReading;
       if (buttonState == HIGH) {
-        plotterReady = false;
+        plotterStatus = "busy";
         doc["plot"] = true;
       }
     }
   }
   lastButtonState = buttonReading;
 
-  if (plotterReady) {
+  if (plotterStatus=="ready") {
     digitalWrite(BTNLED, HIGH);
-  } else {
+  } else if (plotterStatus=="busy") {
     digitalWrite(BTNLED, LOW);
+  } else if (plotterStatus=="thinking"){
+    if(blinkFlag){
+       digitalWrite(BTNLED, HIGH);
+    }else{
+      digitalWrite(BTNLED, LOW);
+    }
+    blinkFlag = !blinkFlag;
+    delay(100);
   }
 
 

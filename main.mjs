@@ -66,7 +66,18 @@ io.on("connection", (socket) => {
       }
 
       //await sleep(5000);
-      await plotIt(data.svg);
+
+      const filename = `./output/spiral-${nanoid(8)}.svg`;
+      await writeSvg(filename, data.svg);
+
+      if (arduinoPort) {
+        arduinoPort.write("thinking");
+      }
+      await optimizeSvg(filename);
+      if (arduinoPort) {
+        arduinoPort.write("busy");
+      }
+      await plot(filename);
 
       console.log("done plotting");
       if (arduinoPort) {
@@ -120,12 +131,4 @@ const optimizeSvg = (filename) =>
 
 const plot = (filename) => $`axicli ${filename}`.nothrow();
 
-const moveSvg = (filename) => $`mv ${filename} ./done/`;
-
-const plotIt = async (data) => {
-  const filename = `./output/spiral-${nanoid(8)}.svg`;
-  await writeSvg(filename, data);
-  await optimizeSvg(filename);
-  await plot(filename);
-	return moveSvg(filename);
-};
+const plotIt = async (data) => {};
