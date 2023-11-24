@@ -191,13 +191,16 @@ const sendSVG = () => {
     const svg = document.getElementById("svg");
     const serializer = new XMLSerializer();
     const source = serializer.serializeToString(svg);
-    // source = '<?xml version="1.0" standalone="no"?>\r\n' + source;
 
     socket.emit("svgstring", {
       svg: source,
     });
+
+    svgRenderer.domElement.remove();
   }
 };
+
+window.sendSVG = sendSVG;
 
 const params = {
   lineLength: { min: 100, max: 10000, value: 5000 },
