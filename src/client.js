@@ -124,7 +124,6 @@ const initSocket = () => {
     clearTimeouts();
 
     const values = JSON.parse(serialParams);
-    console.log("values", values);
     Object.keys(values).forEach((key) => {
       if (key === "plot") {
         console.log("KEY IS PLOT");
