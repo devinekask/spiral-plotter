@@ -61,7 +61,7 @@ io.on("connection", (socket) => {
     if (plotterReady) {
       console.log("let's plot it");
       if (arduinoPort) {
-        arduinoPort.write("busy");
+        arduinoPort.write("thinking");
         plotterReady = false;
       }
 
@@ -70,9 +70,6 @@ io.on("connection", (socket) => {
       const filename = `./output/spiral-${nanoid(8)}.svg`;
       await writeSvg(filename, data.svg);
 
-      if (arduinoPort) {
-        arduinoPort.write("thinking");
-      }
       await optimizeSvg(filename);
       if (arduinoPort) {
         arduinoPort.write("busy");
