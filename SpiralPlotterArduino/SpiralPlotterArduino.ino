@@ -7,6 +7,7 @@ int BTNLED = 10;
 int BTN = 13;
 String plotterStatus = "ready";
 bool blinkFlag = true;
+int blinkCount = 0;
 
 unsigned long lastDebounceTime = 0;
 unsigned long debounceDelay = 50;
@@ -89,6 +90,7 @@ void loop() {
       buttonState = buttonReading;
       if (buttonState == HIGH) {
         plotterStatus = "busy";
+        blinkCount=0;
         doc["plot"] = true;
       }
     }
@@ -105,8 +107,10 @@ void loop() {
     }else{
       digitalWrite(BTNLED, LOW);
     }
-    blinkFlag = !blinkFlag;
-    delay(200);
+    blinkCount++;
+    if(blinkCount%10==0){
+      blinkFlag = !blinkFlag;
+    }
   }
 
 
