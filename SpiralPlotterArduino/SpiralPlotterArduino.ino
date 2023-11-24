@@ -84,6 +84,7 @@ void loop() {
   }
 
   int buttonReading = digitalRead(BTN);
+  
   if (buttonReading != lastButtonState) {
     lastDebounceTime = millis();
   }

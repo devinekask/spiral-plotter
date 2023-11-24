@@ -15,6 +15,7 @@ const io = new Server(httpServer);
 const port = process.env.PORT || 3005;
 let arduinoPort;
 let parser;
+let plotterReady = false;
 
 SerialPort.list().then((ports) => {
   let done = false;
@@ -50,23 +51,30 @@ if (argv.disengage) {
 
 io.on("connection", (socket) => {
   if (arduinoPort) {
+    plotterReady = true;
     arduinoPort.write("ready");
   }
 
   console.log("Socket connected", socket.id);
 
   socket.on("svgstring", async (data) => {
-    console.log("let's plot it");
-    if (arduinoPort) {
-      arduinoPort.write("busy");
-    }
+    if (plotterReady) {
+      console.log("let's plot it");
+      if (arduinoPort) {
+        arduinoPort.write("busy");
+        plotterReady = false;
+      }
 
-    //await sleep(5000);
-    plotIt(data.svg);
+      //await sleep(5000);
+      await plotIt(data.svg);
 
-    console.log("done plotting");
-    if (arduinoPort) {
-      arduinoPort.write("ready");
+      console.log("done plotting");
+      if (arduinoPort) {
+        arduinoPort.write("ready");
+        plotterReady = true;
+      }
+    } else {
+      console.log("Received svg but plotter is not ready");
     }
   });
 
@@ -115,6 +123,5 @@ const plotIt = async (data) => {
   const filename = `./output/spiral-${nanoid(8)}.svg`;
   await writeSvg(filename, data);
   await optimizeSvg(filename);
-  await plot(filename);
-  console.log("ready");
+  return plot(filename);
 };

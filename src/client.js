@@ -124,8 +124,10 @@ const initSocket = () => {
     clearTimeouts();
 
     const values = JSON.parse(serialParams);
+    console.log("values", values);
     Object.keys(values).forEach((key) => {
       if (key === "plot") {
+        console.log("KEY IS PLOT");
         sendSVG();
         return;
       }
@@ -204,9 +206,9 @@ const params = {
   rotateY: { min: 0, max: 2 * Math.PI, value: 0 },
   rotateZ: { min: 0, max: 2 * Math.PI, value: 0 },
   increment: { min: 0.001, max: 0.002, value: 0.001 },
-  start: { min: 0, max: 100, value: 1 },
+  start: { min: 0, max: 10, value: 1 },
   smoothness: { min: 0.1, max: 0.7, value: 0.3 },
-  cone: { min: -10, max: 10, value: 0 },
+  cone: { min: -5, max: 5, value: 0 },
   transX: { min: -1, max: 1, value: 0 },
   transY: { min: -1, max: 1, value: 0 },
   scaleX: { min: 0.1, max: 2, value: 1 },
