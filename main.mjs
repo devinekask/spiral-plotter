@@ -61,8 +61,8 @@ io.on("connection", (socket) => {
       arduinoPort.write("busy");
     }
 
-    await sleep(5000);
-    // plotIt(data.svg);
+    //await sleep(5000);
+    plotIt(data.svg);
 
     console.log("done plotting");
     if (arduinoPort) {

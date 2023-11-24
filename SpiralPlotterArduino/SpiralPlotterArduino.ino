@@ -34,12 +34,20 @@ public:
 
 
 Input inputs[] = {
-  Input("lineLength", 0),
-  Input("increment", 1),
-  Input("cone", 2),
-  Input("rotateX", 3),
-  Input("scaleX", 4),
-  Input("transX", 5)
+  Input("rotateX", A2),
+  Input("rotateY", A1),
+  Input("rotateZ", A3),
+
+  Input("transX", A7),
+  Input("transY", A8),
+  Input("scaleX", A5),
+  Input("scaleY", A4),
+
+  Input("cone", A15),
+  Input("smoothness", A11),
+  Input("start", A12),
+  Input("increment", A14),
+  Input("lineLength", A13)
 };
 
 void setup() {
@@ -56,7 +64,7 @@ void setup() {
 
 void loop() {
   DynamicJsonDocument doc(1024);
-  for (byte i = 0; i < 6; i = i + 1) {
+  for (byte i = 0; i < 12; i = i + 1) {
     inputs[i].read();
     int value = inputs[i].getAverage();
     if (abs(value - inputs[i].previous) > 2) {
