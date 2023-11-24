@@ -109,6 +109,9 @@ const optimizeSvg = (filename) =>
   //$`vpype read ${filename}  linemerge --tolerance 0.5mm  translate -- -5mm -9mm write -p a6 -c -l ${filename}`;
   $`vpype \
 		read ${filename} \
+		linemerge --tolerance 0.5mm \
+		filter --min-length 2mm \
+		linesort \
 		rect --layer 'new' 0 0 148mm 105mm \
 		scaleto -l all -f 13.8cm 9.5cm \
 		translate -- -1mm -3mm \
