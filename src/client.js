@@ -13,7 +13,7 @@ const MODE = {
 };
 
 const PAUSE_TIMEOUT = 3000;
-const SCREENSAVER_TIMEOUT = 10000;
+const SCREENSAVER_TIMEOUT = 1000 * 30;
 
 let currentMode = MODE.DRAW;
 let pauseTimeout, screenSaverTimeout;
