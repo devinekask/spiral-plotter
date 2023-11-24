@@ -120,9 +120,12 @@ const optimizeSvg = (filename) =>
 
 const plot = (filename) => $`axicli ${filename}`.nothrow();
 
+const moveSvg = (filename) => $`mv ${filename} ./done/`;
+
 const plotIt = async (data) => {
   const filename = `./output/spiral-${nanoid(8)}.svg`;
   await writeSvg(filename, data);
   await optimizeSvg(filename);
-  return plot(filename);
+  await plot(filename);
+	return moveSvg(filename);
 };
