@@ -118,7 +118,7 @@ const optimizeSvg = (filename) =>
 		ldelete 2  \
 		write -p a6  -l ${filename}`;
 
-const plot = (filename) => $`axicli ${filename}`;
+const plot = (filename) => $`axicli ${filename}`.nothrow();
 
 const plotIt = async (data) => {
   const filename = `./output/spiral-${nanoid(8)}.svg`;
