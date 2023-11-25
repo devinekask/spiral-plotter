@@ -36,9 +36,9 @@ public:
 
 
 Input inputs[] = {
-  Input("rotateX", A2),
-  Input("rotateY", A1),
-  Input("rotateZ", A3),
+  Input("rotateX", A1),
+  Input("rotateY", A3),
+  Input("rotateZ", A2),
 
   Input("transX", A7),
   Input("transY", A8),
