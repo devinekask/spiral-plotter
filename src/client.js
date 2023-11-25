@@ -209,7 +209,7 @@ const params = {
   rotateZ: { min: 0, max: 2 * Math.PI, value: 0 },
   increment: { min: 0.001, max: 0.002, value: 0.001 },
   start: { min: 0, max: 10, value: 1 },
-  smoothness: { min: 0.1, max: 0.7, value: 0.3 },
+  smoothness: { min: 0.7, max: 0.1, value: 0.3 },
   cone: { min: -5, max: 5, value: 0 },
   transX: { min: -1, max: 1, value: 0 },
   transY: { min: -1, max: 1, value: 0 },
